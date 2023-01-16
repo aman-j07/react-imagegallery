@@ -1,0 +1,18 @@
+.App {
+    text-align: center;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+.previewimg  {
+    max-height: 300px;
+}
+
+.main  {
+    min-height: 90vh;
+    max-width: 400px;
+}
+
+.shorttxt  {
+    font-size: 14px;
+}
