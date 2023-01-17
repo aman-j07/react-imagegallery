@@ -27,8 +27,6 @@ function App() {
     }
   };
 
-  console.log("store-", store);
-
   return (
     <div className="App position-relative">
       <header>
