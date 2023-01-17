@@ -1,12 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import "./App.css";
-import { loadImages,toggleLike,toggleDislike } from "./redux/imgGallerySlice";
+import { loadImages, toggleLike, toggleDislike, addComment} from "./redux/imgGallerySlice";
 import { storeInt } from "./types";
 
 function App() {
   const dispatch = useDispatch();
   const useAppSelector: TypedUseSelectorHook<storeInt> = useSelector;
+  const commentRefs=useRef<HTMLInputElement[]>([])
 
   const store = useAppSelector((store) => store);
 
@@ -14,7 +15,18 @@ function App() {
     dispatch<any>(loadImages());
   }, []);
 
-  
+  useEffect(()=>{
+    localStorage.setItem('posts',JSON.stringify(store.imgGalleryReducer.posts))
+  },[store])
+
+  const addCommentDis = (e: any,i:number) => {
+    e.preventDefault();
+    if ( commentRefs.current!==null ) {
+      console.log({ ind: i, comment: commentRefs.current[i].value })
+      dispatch(addComment({ ind: i, comment: commentRefs.current[i].value }));
+    }
+  };
+
   console.log("store-", store);
 
   return (
@@ -24,19 +36,6 @@ function App() {
           <div className="container-fluid">
             <span className="navbar-brand">
               <i className="bi bi-pencil-square fs-4"></i> Blogzz
-            </span>
-
-            <span>
-              <button
-                type="button"
-                className="btn border-0 text-white text-muted"
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                title="Sign in to add post"
-              >
-                Add a Post
-              </button>
-              <button className="btn border-0 text-white">Sign In</button>{" "}
             </span>
           </div>
         </nav>
@@ -56,32 +55,42 @@ function App() {
                     alt={ele.src}
                   />
                   <div className="text-start p-2 bg-dark">
-                    <span className="card-text text-start ">
-                      {ele.like ? (
-                        <button onClick={()=>{dispatch<any>(toggleLike(i))}} className="border-0 bg-transparent text-white ps-0 shorttxt">
-                          <i className="bi bi-hand-thumbs-up-fill"></i>Liked
-                        </button>
-                      ) : (
-                        <button onClick={()=>{dispatch<any>(toggleLike(i))}} className="border-0 bg-transparent text-white ps-0 shorttxt">
-                          <i className="bi bi-hand-thumbs-up"></i>Like
-                        </button>
-                      )}
-                      {ele.dislike ? (
-                        <button onClick={()=>{dispatch<any>(toggleDislike(i))}} className="border-0 bg-transparent text-white ps-0 shorttxt">
-                          <i className="bi bi-hand-thumbs-down-fill"></i>
-                          Disliked
-                        </button>
-                      ) : (
-                        <button onClick={()=>{dispatch<any>(toggleDislike(i))}} className="border-0 bg-transparent text-white ps-0 shorttxt">
-                          <i className="bi bi-hand-thumbs-down"></i>Dislike
-                        </button>
-                      )}
+                    <span className="card-text text-start">
+                      <button
+                          onClick={() => {
+                            dispatch<any>(toggleLike(i));
+                          }}
+                          className="border-0 bg-transparent text-white ps-0 shorttxt"
+                        >
+                          {ele.like ?<><i className="bi bi-hand-thumbs-up-fill"></i>Liked</>:<><i className="bi bi-hand-thumbs-up"></i>Like</>}
+                      </button>
+                      <button
+                          onClick={() => {
+                            dispatch<any>(toggleDislike(i));
+                          }}
+                          className="border-0 bg-transparent text-white ps-0 shorttxt"
+                        >{ele.dislike?<><i className="bi bi-hand-thumbs-down-fill"></i>Disliked</>:<><i className="bi bi-hand-thumbs-down"></i>Dislike</>}
+                      </button>
                     </span>
-                    <input
-                      className="rounded-2 border-0 shorttxt p-1 mt-2 w-100"
-                      type="text"
-                      placeholder="Add a comment"
-                    />
+                    <form className="d-flex align-items-center mt-2" onSubmit={(e)=>{addCommentDis(e,i)}}>
+                      <input
+                        ref={(el)=> {el!==null && commentRefs.current.push(el)}}
+                        className="rounded-2 border-0 shorttxt p-1 "
+                        type="text"
+                        placeholder="Add a comment"
+                      />
+                      <button className="btn btn-dark bg-transparent vshorttxt col-4 px-2 py-1" type="submit">Add Comment</button>
+                    </form>
+                    {ele.comments.length>0?<div className="text-white comments">
+                      <button className="btn btn-dark btn-sm text-start" type="button" data-bs-toggle="collapse" data-bs-target={`#comments${i}`} aria-expanded="false" aria-controls={`comments${i}`}>
+                        Comments <i className="bi bi-caret-down-fill"></i>
+                      </button>
+                      <div className="collapse" id={`comments${i}`}>
+                        {ele.comments.map((item,i)=>{
+                          return <p key={i} className="vshorttxt mt-0 mb-1 ms-3">{item}</p>
+                        })}
+                      </div>
+                    </div>:''}
                   </div>
                 </div>
               </div>

@@ -9,7 +9,6 @@ const initialState:imgGalleryReducer = {
 };
 
 export const loadImages = createAsyncThunk("images/loadImages", async () => {
-  console.log('async called')
   let res;
   try{
    res = await axios.get(
@@ -23,9 +22,8 @@ export const loadImages = createAsyncThunk("images/loadImages", async () => {
     }
   );
   }catch(err){
-    console.log(err)
+    return err
   }
-  console.log(res)
   if(res!==undefined){
   let temp = res.data.photos.map((ele:any) => {
     return {
@@ -35,7 +33,6 @@ export const loadImages = createAsyncThunk("images/loadImages", async () => {
       src:ele.src.original
     };
   });
-  console.log(temp)
   return temp
 }
 });
@@ -51,7 +48,8 @@ export const imgGallerySlice = createSlice({
       state.posts[action.payload].dislike=!state.posts[action.payload].dislike
     },
     addComment:(state,action)=>{
-      
+      console.log(action.payload)
+      state.posts[action.payload.ind].comments.push(action.payload.comment);
     }
   },
   extraReducers: (builder) => {
@@ -71,5 +69,5 @@ export const imgGallerySlice = createSlice({
   },
 });
 
-export const {toggleLike,toggleDislike}=imgGallerySlice.actions;
+export const {toggleLike,toggleDislike,addComment}=imgGallerySlice.actions;
 export default imgGallerySlice.reducer;
