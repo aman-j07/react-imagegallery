@@ -22,18 +22,17 @@ function App() {
   const addCommentDis = (e: any,i:number) => {
     e.preventDefault();
     if ( commentRefs.current!==null ) {
-      console.log({ ind: i, comment: commentRefs.current[i].value })
       dispatch(addComment({ ind: i, comment: commentRefs.current[i].value }));
     }
   };
 
   return (
-    <div className="App position-relative">
-      <header>
+    <div className="App">
+      <header className="position-fixed top-0 w-100 header">
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="container-fluid">
             <span className="navbar-brand">
-              <i className="bi bi-pencil-square fs-4"></i> Blogzz
+              <i className="bi bi-camera2 fs-4"></i> Image Gallery
             </span>
           </div>
         </nav>
@@ -98,9 +97,9 @@ function App() {
           <h2 className="my-4">Add some images :) Its empty here!!</h2>
         )}
       </section>
-      <footer className="footer bg-dark text-white d-flex flex-wrap justify-content-between align-items-center py-4 px-3 border-top position-absolute bottom-0 w-100">
+      <footer className="footer bg-dark text-white d-flex flex-wrap justify-content-between align-items-center py-4 px-3 border-top position-fixed bottom-0 w-100">
         <div className="col-md-4 d-flex align-items-center">
-          <i className="bi bi-pencil-square fs-4 me-2"></i>
+          <i className="bi bi-camera2 fs-4 me-2"></i>
           <span className="mb-3 mb-md-0 text-muted">© 2022 Company, Inc</span>
         </div>
         <ul className="nav col-md-4 justify-content-end list-unstyled d-flex">
